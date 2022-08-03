@@ -1,45 +1,61 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
+import java.io.OutputStreamWriter;
+import java.util.Arrays;
 
 public class Main {
-
-	public static void main(String[] args) throws NumberFormatException, IOException {
-		// TODO Auto-generated method stub
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringBuilder sb = new StringBuilder();
-		
-		int numBR;
-		int sum = 0;
-		ArrayList<Integer> nums9 = new ArrayList<Integer>();
-		
-		for (int i = 0; i < 9; i++) {
-			numBR = Integer.parseInt(br.readLine());
-			nums9.add(numBR);
-			sum = sum+numBR;
-		}
-		
-		Collections.sort(nums9);
-		
-		int sumMinusOne = 0;
-		for (int i = 0; i < 9; i++) {
-			sumMinusOne = sum - nums9.get(i) - 100;
-			if(sumMinusOne > 0 && nums9.contains(sumMinusOne)) {
-				nums9.remove(i);
-				nums9.remove((int)nums9.indexOf(sumMinusOne));
-				break;
+	static int N, R;
+	static int[] numbers;
+	static boolean[] selected;
+	static int sumAll, sum2; //sumAll : 1~9 쌍둥이의 키 합, sum2 : 2개로 뽑은 난쟁이의 키 합
+	static final int TARGET=100;
+	static boolean isOut;
+	
+	static void combination(int cnt, int start) {
+		if(cnt==R) {
+			if(!isOut && sumAll-sum2 == TARGET) {
+				for(int i=0; i<N; i++) {
+					if(!selected[i]) {
+						System.out.println(numbers[i]);
+					}
+				}
+				isOut = true;
 			}
+			return;
 		}
 		
-		
-		Iterator iter = nums9.iterator();
-		while(iter.hasNext()){
-			sb.append((int) iter.next()).append('\n');
+		for(int i=start; i<N; i++) {
+			sum2 += numbers[i];
+			selected[i] = true;
+			combination(cnt+1,i+1);
+			sum2 -= numbers[i];
+			selected[i] = false;
 		}
-		sb.deleteCharAt(sb.lastIndexOf("\n"));
-		System.out.println(sb);
+	}
+	
+	public static void main(String[] args) throws NumberFormatException, IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+		N=9;
+		R=2;
+		sumAll=0;
+		sum2=0;
+		numbers = new int[N];
+		selected = new boolean[N];
+		isOut = false;
+		
+		
+		
+		for(int i=0; i<N; i++) {
+			numbers[i] = Integer.parseInt(br.readLine());
+			sumAll+=numbers[i];
+		}
+		Arrays.sort(numbers);
+		
+		combination(0,0);
+		
+		
 	}
 }
