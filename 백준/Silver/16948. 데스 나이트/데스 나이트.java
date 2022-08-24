@@ -59,6 +59,8 @@ public class Main {
 				for(int i=0, endi=dr.length; i<endi; i++) {
 					Position next = new Position(cur.r+dr[i], cur.c+dc[i]);
 					if(next.isOut() || map[next.r][next.c]) continue;
+					if(Math.abs(next.r-target.r) >= Math.abs(cur.r-target.r) 
+					  && Math.abs(next.c-target.c) >= Math.abs(cur.c-target.c)) continue;
 					if(next.r == target.r && next.c == target.c) {
 						return dist;
 					}
@@ -68,14 +70,5 @@ public class Main {
 			}
 		}
 		return -1;
-	}
-
-	private static boolean isNear(Position next, Position target) {
-		int distR = Math.abs(next.r - target.r);
-		int distC = Math.abs(next.c - target.c);
-		if(distR<=1 || distC<=1) {
-			return true;
-		}
-		return false;
 	}
 }
