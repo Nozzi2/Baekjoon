@@ -5,57 +5,61 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-	static int[] dr = {0,1,1};
-	static int[] dc = {1,1,0};
 	static int[][] map;
+	static int[][][] pipes;
 	static int N;
-	static int cnt;
 	
 	public static void main(String[] args) throws NumberFormatException, IOException {
-		cnt=0;
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		N = Integer.parseInt(br.readLine());
-		map = new int[N+2][N+2];
+		map = new int[N][N];
+		pipes = new int[3][N][N]; //ㅡ0 N1 ㅣ2
 		
-		for(int i=1; i<=N; i++) {
+		for(int i=0; i<N; i++) {
 			StringTokenizer st= new StringTokenizer(br.readLine());
-			for(int j=1; j<=N; j++) {
+			for(int j=0; j<N; j++) {
 				map[i][j] = Integer.parseInt(st.nextToken());
 			}//for j
 		}//for i
 		
-		dfs(1,2,0);
-		
-		System.out.println(cnt);
-	}
-
-	private static void dfs(int r, int c, int k) {
-		if(r==N && c==N) {
-			cnt++;
-			return;
-		}
-		
-		
-		/*0 > 01
-		1 > 012
-		2 > 12*/
-		
-		for(int i=0; i<3; i++) {
-			if(Math.abs(k-i)<2) {
-				int nr = r+dr[i];
-				int nc = c+dc[i];
-				if(nr>N || nc>N) continue; //파이프가 벗어날경우
-				if(i!=1) {
-					if(map[nr][nc]==1) continue; //벽이 있을 경우
-				} else {
-					if(map[nr][nc]==1 
-					 ||map[nr-1][nc]==1
-					 ||map[nr][nc-1]==1) continue;
-				}
-								
-				dfs(nr, nc, i);
+		pipes[0][0][1] = 1;
+		for(int i=2; i<N; i++) {
+			if(map[0][i]!=1 && pipes[0][0][i-1] !=0) {
+				pipes[0][0][i] =1;
 			}
 		}
+
+		//왼쪽 2열은 모두 0이 맞음.
 		
+		for(int r=1; r<N; r++) {
+			for(int c=2; c<N; c++) {
+				for(int i=0; i<3; i++) {
+					switch(i) {
+					case 0:
+						if(map[r][c]!=1) { //벽이 없다면
+							pipes[i][r][c] = pipes[1][r][c-1]+pipes[0][r][c-1];
+						}
+						break;
+					case 1:
+						if(map[r][c]!=1 && map[r-1][c]!=1 && map[r][c-1]!=1) {
+							pipes[i][r][c] = pipes[1][r-1][c-1]+pipes[0][r-1][c-1]+pipes[2][r-1][c-1];
+						}
+						break;
+					case 2:
+						if(map[r][c]!=1) { //벽이 없다면
+							pipes[i][r][c] = pipes[1][r-1][c]+pipes[2][r-1][c];
+						}
+						break;
+					}//switch
+				}//for i
+			}//for c
+		}//for r
+		
+		
+		int sum=0;
+		for(int i=0; i<3; i++) {
+			sum+=pipes[i][N-1][N-1];
+		}
+		System.out.println(sum);
 	}
 }
