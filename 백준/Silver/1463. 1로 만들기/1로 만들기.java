@@ -4,39 +4,24 @@ import java.io.InputStreamReader;
 
 public class Main {
 
-	private static int[] D;
-	
-	public static int go(int num) {
-		
-		if(num==1) {
-			D[1]=1;
-		}
-		D[num] = D[num-1]+1;
-		if(num%2 ==0) {
-			int temp = D[num/2]+1;
-			if(temp<D[num]) {
-				D[num]=temp;
-			}
-		}
-		if(num%3 ==0) {
-			int temp = D[num/3]+1;
-			if(temp<D[num]) {
-				D[num]=temp;
-			}
-		}
-		
-		
-		return D[num];
-	}
-	
 	public static void main(String[] args) throws NumberFormatException, IOException {
-		BufferedReader br= new BufferedReader(new InputStreamReader(System.in));
-		int num=Integer.parseInt(br.readLine());
-		D = new int[num+1];
-		D[1]=0;
-		for(int i=2; i<=num; i++) {
-			go(i);
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int n = Integer.parseInt(br.readLine());
+		int[] memo = new int[n+1];
+		
+		for(int i=2; i<=n; i++) {
+			if(i%6==0) {
+				memo[i] = Math.min(Math.min(memo[i-1]+1, memo[i/3]+1), memo[i/2]+1);
+			} else if(i%3==0) {
+				memo[i] = Math.min(memo[i-1]+1, memo[i/3]+1);
+			} else if(i%2==0) {
+				memo[i] = Math.min(memo[i-1]+1, memo[i/2]+1);
+			} else {
+				memo[i] = memo[i-1]+1;
+			}
 		}
-		System.out.println(D[num]);
+		
+		System.out.println(memo[n]);
 	}
+
 }
