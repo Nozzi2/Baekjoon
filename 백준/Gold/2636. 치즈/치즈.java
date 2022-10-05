@@ -49,6 +49,11 @@ public class Main {
 			this.maxR = maxR;
 			this.maxC = maxC;
 		}
+
+		@Override
+		public String toString() {
+			return "Range [minR=" + minR + ", minC=" + minC + ", maxR=" + maxR + ", maxC=" + maxC + "]";
+		}
 	}
 
 	public static void main(String[] args) throws IOException {
@@ -74,28 +79,31 @@ public class Main {
 			}
 		}
 		
-		Range range = new Range(minR-1, minC-1, maxR, maxC);
+		Range range = new Range(minR-1, minC-1, maxR+1, maxC+1);
 		
 		Position start = new Position(minR-1, minC-1);
 		
 		int preCheese=0;
 		int cheese=0;
 		int cnt=0;
+//		System.out.println(range);
 		while(true) {
-			//printMap();
+//			printMap();
 			visited = new boolean[R+2][C+2];
-			//cheese = bfs(start, range);
-			cheese = bfs(start);
+			cheese = bfs(start, range);
+			//cheese = bfs(start);
 			if(cheese==0) break;
 			preCheese=cheese;
 			cnt++;
 			range = new Range(minR, minC, maxR, maxC);
 			start = new Position(minR, minC);
+			
+//			System.out.println(range);
 		}
 		System.out.println(cnt);
 		System.out.println(preCheese);
 		
-		//printMap();
+//		printMap();
 	}
 	
 	private static int bfs(Position start) {
@@ -122,33 +130,33 @@ public class Main {
 		return cnt;
 	}
 
-//	private static int bfs(Position start, Range range) {
-//		Queue<Position> que = new ArrayDeque<>();
-//		que.offer(start);
-//		visited[start.r][start.c] = true;
-//		int cnt=0;
-//		
-//		while(!que.isEmpty()) {
-//			Position cur = que.poll();
-//			for(int i=0; i<4; i++) {
-//				Position next = new Position(cur.r+dr[i], cur.c+dc[i]);
-//				if(next.isOut(range)) continue;
-//				if(visited[next.r][next.c]) continue;
-//				visited[next.r][next.c] = true;
-//				if(map[next.r][next.c]==1) {
-//					minR = Math.min(minR, next.r);
-//					minC = Math.min(minC, next.c);
-//					maxR = Math.max(maxR, next.r);
-//					maxC = Math.max(maxC, next.c);
-//					cnt++;
-//					map[next.r][next.c] = 0;
-//					continue;
-//				}
-//				que.offer(next);
-//			}
-//		}
-//		return cnt;
-//	}
+	private static int bfs(Position start, Range range) {
+		Queue<Position> que = new ArrayDeque<>();
+		que.offer(start);
+		visited[start.r][start.c] = true;
+		int cnt=0;
+		
+		while(!que.isEmpty()) {
+			Position cur = que.poll();
+			for(int i=0; i<4; i++) {
+				Position next = new Position(cur.r+dr[i], cur.c+dc[i]);
+				if(next.isOut(range)) continue;
+				if(visited[next.r][next.c]) continue;
+				visited[next.r][next.c] = true;
+				if(map[next.r][next.c]==1) {
+					minR = Math.min(minR, next.r);
+					minC = Math.min(minC, next.c);
+					maxR = Math.max(maxR, next.r);
+					maxC = Math.max(maxC, next.c);
+					cnt++;
+					map[next.r][next.c] = 0;
+					continue;
+				}
+				que.offer(next);
+			}
+		}
+		return cnt;
+	}
 
 	
 	private static void printMap() {
