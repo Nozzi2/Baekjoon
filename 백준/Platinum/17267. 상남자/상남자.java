@@ -12,13 +12,12 @@ public class Main {
 	static int R,C,cnt;
 	static int[][] map;
 	static int[][] lmap, rmap;
-	static boolean[][] visited;
 	
 	static class Pos {
 		int r;
 		int c;
-		int le;
-		int ri;
+		int le; //왼쪽으로 갈 수 있는 칸수
+		int ri; //오른쪽으로 갈 수 있는 칸수
 		
 		public Pos(int r, int c) { 
 			this.r = r;
@@ -48,13 +47,12 @@ public class Main {
 		C = Integer.parseInt(st.nextToken());
 		
 		st = new StringTokenizer(br.readLine());
-		int le = Integer.parseInt(st.nextToken());
-		int ri = Integer.parseInt(st.nextToken());
+		int le = Integer.parseInt(st.nextToken()); //왼쪽으로 갈 수 있는 칸수
+		int ri = Integer.parseInt(st.nextToken()); //오른쪽으로 갈 수 있는 칸수
 		
 		map = new int[R+2][C+2];
 		lmap = new int[R+2][C+2];
 		rmap = new int[R+2][C+2];
-		visited = new boolean[R+2][C+2];
 		cnt=0;
 		Pos start = null;
 		
@@ -69,30 +67,23 @@ public class Main {
 				rmap[i][j] = Integer.MIN_VALUE;
 			}
 		}
-		
-		//dfs( start,le,ri );
 		bfs(start);
-		
-//		System.out.println();
-//		for(int i=1; i<=R; i++) {
-//			for(int j=1; j<=C; j++) {
-//				System.out.print(lmap[i][j]!=Integer.MIN_VALUE?"1":"0");
-//			}
-//			System.out.println();
-//		}
-//		System.out.println();
 		System.out.println(cnt);
 	}
 
+	
 	private static void bfs(Pos start) {
 		Queue<Pos> que = new ArrayDeque<>();
 		que.offer(start);
+		//방문체크 대신 방문했을 때 le,ri 값을 저장함
 		lmap[start.r][start.c] = start.le;
 		rmap[start.r][start.c] = start.ri;
 		cnt++;
+		
 		while(!que.isEmpty()) {
 			Pos cur = que.poll();
 			for(int i=0; i<4; i++) {
+				//왼쪽 또는 오른쪽 탐색할 떄 le, ri 값이 1 이상이여야함
 				if(i==2 && cur.le==0) continue;
 				if(i==3 && cur.ri==0) continue;
 				
@@ -100,87 +91,21 @@ public class Main {
 				int nri = i==3?-1:0;
 				Pos next = new Pos(cur.r+dr[i],cur.c+dc[i],cur.le+nle,cur.ri+nri);
 				
+				if(next.isOut()) continue;
+				if(map[next.r][next.c]==1) continue;
 				
-				if(next.isOut()) {
-//					System.out.println("1번"+next.r+","+next.c);
-					continue;
-				}
-				if(map[next.r][next.c]==1) {
-//					System.out.println("2번"+next.r+","+next.c);
-					continue;
-				}
+				//이전에 방문했던 값이 le, ri 둘다 같거나 적게 남았다면,
+				//즉, 이전에 방문 했던 값이 방문할 기회가 더 많았더라면
+				//ex) 이전 방문했을 때 왼2칸, 오2칸 더 갈 수 있었는데,
+				//    이번에 방문했을 때 왼0칸, 오2칸이라면 더이상 탐색할 필요 없음.
+				//	   이전에 방문했을 때가 더 많이 갈 수 있기 때문.
 				if(lmap[next.r][next.c] >= next.le
-					&& rmap[next.r][next.c] >= next.ri) {
-//					System.out.println("3번"+next.r+","+next.c);
-//					System.out.println("  l:"+lmap[cur.r][cur.c]+"/"+next.le);
-//					System.out.println("  r:"+rmap[cur.r][cur.c]+"/"+next.ri);
-					continue;
-				}
-				if(lmap[next.r][next.c]==Integer.MIN_VALUE) cnt++;
+					&& rmap[next.r][next.c] >= next.ri) continue;
+				if(lmap[next.r][next.c]==Integer.MIN_VALUE) cnt++;//첫 방문만 카운트
 				lmap[next.r][next.c] = next.le;
 				rmap[next.r][next.c] = next.ri;
-//				System.out.println("들어는 감? "+next.r+","+next.c);
 				que.offer(next);
 			}
 		}//while
-		
-	}
-
-	private static boolean dfs(Pos cur, int le, int ri) {
-		//맵 벗어났는지,벽여부 체크
-		if(cur.isOut() || map[cur.r][cur.c] ==1) {
-			lmap[cur.r][cur.c] = Integer.MIN_VALUE;
-			rmap[cur.r][cur.c] = Integer.MIN_VALUE;
-			return false;
-		}
-		
-		//방문여부 체크
-		//lmap[cur.r][cur.c] >= le && rmap[cur.r][cur.c] >= ri
-//		if(lmap[cur.r][cur.c] >= le || rmap[cur.r][cur.c] >= ri) return; //방문했었으면 끝내기
-//		else { //방문 안했으면 해당칸 방문체크하고 위아래로 모두 dfs 탐색 호출하기
-//			if(lmap[cur.r][cur.c] == Integer.MIN_VALUE)	cnt++;
-//			lmap[cur.r][cur.c] = le;
-//			rmap[cur.r][cur.c] = ri;
-//			
-//			//위로 dfs 탐색 호출
-//			dfs(new Pos(cur.r+1, cur.c), le, ri);
-//			//아래로 dfs 탐색 호출
-//			dfs(new Pos(cur.r-1, cur.c), le, ri);
-//		}
-//		if(lmap[cur.r][cur.c] >= le && rmap[cur.r][cur.c] >= ri) {
-//			 int num=1;
-//		}
-//		//if(lmap[cur.r][cur.c] > le || rmap[cur.r][cur.c] > ri) return false; //방문했었으면 끝내기
-//		else 
-		if(lmap[cur.r][cur.c] < le || rmap[cur.r][cur.c] < ri){ //방문 안했으면 해당칸 방문체크하고 위아래로 모두 dfs 탐색 호출하기
-			//위로 한줄 쫙 dfs 탐색 호출
-			for(int i=cur.r; i>=1; i--) {
-				if(new Pos(i,cur.c).isOut() || map[i][cur.c] ==1) break;
-				if(lmap[i][cur.c] == Integer.MIN_VALUE) cnt++;
-				lmap[i][cur.c] = le;
-				rmap[i][cur.c] = ri;
-				if(!dfs(new Pos(i, cur.c), le, ri)) break;
-			}
-			//아래로 한줄 쫙 dfs 탐색 호출
-			for(int i=cur.r+1; i<=R; i++) {
-				if(new Pos(i,cur.c).isOut() || map[i][cur.c] ==1) break;
-				if(lmap[i][cur.c] == Integer.MIN_VALUE) cnt++;
-				lmap[i][cur.c] = le;
-				rmap[i][cur.c] = ri;
-				if(!dfs(new Pos(i, cur.c), le, ri)) break;
-			}
-//			//위로 dfs 탐색 호출
-//			dfs(new Pos(cur.r+1, cur.c), le, ri);
-//			//아래로 dfs 탐색 호출
-//			dfs(new Pos(cur.r-1, cur.c), le, ri);
-		}
-		
-		//갖고 있는 le이 있으면 왼쪽  dfs탐색 호출
-		if(le!=0) dfs(new Pos(cur.r,cur.c-1),le-1,ri);
-		
-		//갖고 있는 ri이 있으면 오른쪽  dfs탐색 호출
-		if(ri!=0) dfs(new Pos(cur.r,cur.c+1),le,ri-1);
-		
-		return true;
 	}
 }
