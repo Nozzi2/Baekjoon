@@ -16,44 +16,37 @@ class Solution {
         
         int progCnt = progresses.length; //작업의 갯수
         int[] days = new int[progCnt]; //작업들의 소요일 배열
+        //입출력 예#1의 경우 [7,3, 11]
+        //입출력 예#2의 경우 [5, 10,1,1, 20,1]
         
         //소요일 계산
         for(int i=0; i<progCnt; i++){
-            days[i] = (100-progresses[i])/speeds[i]; 
-            System.out.print("(100-"+progresses[i]+")/"+speeds[i]+"="+((100-progresses[i])/speeds[i]));
+            days[i] = (100-progresses[i])/speeds[i];
             if((100-progresses[i])%speeds[i]>=1){ //소요일이 n.xxx일이라면
                 days[i]++; //n+1이 저장되도록
-                System.out.print("+1");
             }
-            System.out.print("="+days[i]+", ");
         }
-        System.out.println();
         
         List<Integer> deployCnts = new ArrayList<>();
         int prevDay = days[0]; //다음번째 작업에 배포에 소요된 일수
         int deployCnt = 1; //한번에 배포 가능한 갯수
         
         for(int i=1; i<progCnt; i++){
-            System.out.print(i+"번째 : "+days[i]+" / ");
             if(prevDay>=days[i]){
                 deployCnt++;
             } else {
-                System.out.print(deployCnt+", ");
                 deployCnts.add(deployCnt);
                 deployCnt = 1;
                 prevDay = days[i];
             }
-            System.out.println();
         }
         deployCnts.add(deployCnt); //마지막에 저장된 배포일까지 list에 추가
         
-        int[] answer = new int[deployCnts.size()];
-        System.out.println("\n길이는 "+answer.length);
+        int[] answer = new int[deployCnts.size()]; //출력할 배열 선언
         
         // list > array 변환
         for(int i=0, endi=answer.length; i<endi; i++){
             answer[i] = deployCnts.get(i);
-            System.out.print(deployCnts.get(i)+", ");
         }
         
         return answer;
