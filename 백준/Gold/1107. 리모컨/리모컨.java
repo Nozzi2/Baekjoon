@@ -42,7 +42,6 @@ public class Main {
             int num = Integer.parseInt(st.nextToken());
             canUseNumbers[num] = false;
         }
-//        System.out.println(Arrays.toString(canUseNumbers));
 
         //1. 100에서 +, -를 눌러서 타겟 숫자로 가는 경우 (타겟숫자 - 100)
         int case1 = Math.abs(TARGET_CH - START_CH);
@@ -50,7 +49,7 @@ public class Main {
         //2. 타겟 숫자보다 크지만 가장 타겟 숫자와 가까운 경우 (|타겟숫자 - 크면서 가까운 숫자|)
         int case2 = Integer.MAX_VALUE;
         boolean isNum = false; //아래 반복문으로 숫자를 만들었는지 여부 저장
-        for (int i = TARGET_CH+1; i <= LIMIT_CH; i++) { //5555 > LIMIT_CH//////////////////////////////
+        for (int i = TARGET_CH+1; i <= LIMIT_CH; i++) {
             if (checkNumber(i)) {
                 isNum = true;
                 case2 = i;
@@ -60,7 +59,6 @@ public class Main {
         if (isNum) { //숫자가 만들어진 경우
             //자릿수만큼 버튼을 조작해야함.
             int jarisu = getJarisu(case2);
-//            System.out.println("case2의 자릿수 : "+jarisu);
             case2 = case2 - TARGET_CH + jarisu;
         }
 
@@ -77,15 +75,11 @@ public class Main {
         if (isNum) { //숫자가 만들어진 경우
             //자릿수만큼 버튼을 조작해야함.
             int jarisu = getJarisu(case3);
-//            System.out.println("case2의 자릿수 : "+jarisu);
             case3 = TARGET_CH - case3 + jarisu;
         }
 
         int min = Math.min(case1, case2);
         min = Math.min(min, case3);
-
-//        System.out.printf("case1 : %d\ncase2 : %d\ncase3 : %d\n",case1, case2, case3);
-//        System.out.printf("case1 : %d\ncase2 : %d\n",case1, case2);
 
         System.out.println(min);
     }
@@ -103,25 +97,77 @@ public class Main {
 
     //각 자릿수별로 사용할 수 있는 버튼만 있는 숫자인지 검사하는 메소드
     private static boolean checkNumber(int num) {
-//        System.out.println(num+"번 검사 시작");
+        //첫입력 자체가 0인 경우 예외케이스 처리
         if (num == 0 && !canUseNumbers[num]) {
             return false;
         }
 
         while (num!=0) {
             int btnNum = num % 10;
-//            System.out.print(btnNum); ////////////////////////
             if (!canUseNumbers[btnNum]) {
-//                System.out.println(" > 사용 불가능 XXXXXXXX");
                 return false;
             }
-//            System.out.println(" > 사용 가능");
-
-//            if(num==0) break;
 
             num /= 10;
         }
-//        System.out.println("사용 가능한 숫자임!!!!!!!!!!!!!!!!!!!!!");
-        return true; ////////////////////////////////////////
+        return true;
     }
 }
+
+/*
+5457
+3
+6 7 8
+case1 : 5357
+case2 : 6
+case3 : 6
+6
+
+100
+5
+0 1 2 3 4
+case1 : 0
+case2 : 458
+case3 : 3
+0
+
+500000
+8
+0 2 3 4 6 7 8 9
+case1 : 499900
+case2 : 11117
+case3 : 344451
+11117
+
+100
+3
+1 0 5
+case1 : 0
+case2 : 125
+case3 : 3
+0
+
+14124
+0
+case1 : 14024
+case2 : 6
+case3 : 5
+5
+
+1
+9
+1 2 3 4 5 6 7 8 9
+case1 : 99
+case2 : 2147483647
+case3 : 2
+2
+
+80000
+2
+8 9
+case1 : 79900
+case2 : 20006
+case3 : 2228
+2228
+
+ */
