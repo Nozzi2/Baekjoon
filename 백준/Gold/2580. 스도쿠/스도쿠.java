@@ -99,9 +99,7 @@ public class Main {
             }
         }
 
-
-
-
+        //0칸마다 넣을 수 있는 숫자 저장
         for (Blank b : blanks) {
             int numbers =0; //비트마스킹으로 저장할 값
             //가로검사
@@ -113,7 +111,7 @@ public class Main {
             //9칸검사
             numbers = numbers|nines[b.r/3][b.c/3];
 
-            //1부터 9까지 들어갈 수 있는 숫자를 해당 칸 리스트에 추가
+            //1부터 9까지 들어갈 수 있는 숫자를 해당 0칸 리스트에 추가
             for (int i = 1; i <= 9; i++) {
                 if((numbers & 1 << i) != 1 << i){
                     b.numbers.add(i);
@@ -121,15 +119,12 @@ public class Main {
             }
         }
 
-
-
         dfs(0);
     }
 
     private static void dfs(int index) {
         if(isPrinted) return;
         if (index == blanks.size()) {
-//            System.out.println("끝났어");
             print();
             isPrinted = true;
             return;
@@ -137,9 +132,10 @@ public class Main {
 
         Blank cur = blanks.get(index);
         for (int num : cur.numbers) {
-            int bit = rowArr[cur.r]|colArr[cur.c]|nines[cur.r/3][cur.c/3];
-            if((bit & 1 << num) == 1 << num) continue;
+            int bit = rowArr[cur.r]|colArr[cur.c]|nines[cur.r/3][cur.c/3]; //가로검사, 세로검사, 9칸 검사값 저장
+            if((bit & 1 << num) == 1 << num) continue; //만약 이전에 넣은 숫자 떄문에 넣을 수 없는 숫자라면 다음 숫자 탐색
 
+            //bit 배열 갱신
             rowArr[cur.r] += 1<<num;
             colArr[cur.c] += 1<<num;
             nines[cur.r/3][cur.c/3] += 1<<num;
@@ -147,6 +143,7 @@ public class Main {
 
             dfs(index+1);
 
+            //bit 배열 복원
             rowArr[cur.r] -= 1<<num;
             colArr[cur.c] -= 1<<num;
             nines[cur.r/3][cur.c/3] -= 1<<num;
