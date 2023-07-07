@@ -32,13 +32,13 @@ public class Main {
             int a = Integer.parseInt(st.nextToken());
             int b = Integer.parseInt(st.nextToken());
 
-            int A = find(a);
-            int B = find(b);
+//            int A = find(a);
+//            int B = find(b);
 
             if (command == 0) {
-                union(A,B);
+                union(a,b);
             } else if (command == 1) {
-                System.out.println(isSameParent(A,B)?"YES":"NO");
+                System.out.println(isSameParent(a,b)?"YES":"NO");
             }
 //            System.out.println(Arrays.toString(clone));
 //            System.out.println(Arrays.toString(parents));
@@ -47,13 +47,13 @@ public class Main {
     }
 
     static void union(int a, int b) {
-        int parentA = find(a);
-        int parentB = find(b);
+        a = find(a);
+        b = find(b);
 
-        if(parentA < parentB) {
-            parents[b] = parentA;
+        if(a < b) {
+            parents[b] = a;
         } else {
-            parents[a] = parentB;
+            parents[a] = b;
         }
     }
 
