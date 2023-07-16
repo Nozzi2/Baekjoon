@@ -8,7 +8,7 @@
 
 ### 분류
 
-자료 구조(data_structures), 구현(implementation), 스택(stack)
+자료 구조, 구현, 스택
 
 ### 문제 설명
 
