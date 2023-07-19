@@ -55,7 +55,7 @@ public class Main {
         Arrays.sort(houses);
 
         int lo = 1;
-        int hi = houses[size - 1] - houses[0] + 1;
+        int hi = ((houses[size - 1] - houses[0]) / (targetCount - 1)) + 1;
 
         //Upper bound
         while (lo < hi) {
