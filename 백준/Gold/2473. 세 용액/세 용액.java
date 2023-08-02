@@ -54,25 +54,17 @@ public class Main {
         for (int i = 0; i < size-1; i++) {
             int le = i+1;
             int ri = size-1;
-//            System.out.printf("start = %d\n",arr[i]);
-//            long tmpDist = Math.abs(arr[i] + arr[le] + arr[ri]);
 
-            //mid 순회
             while (le < ri) {
                 long curSum = arr[i] + arr[le] + arr[ri];
                 long curDist = Math.abs(curSum);
-//                System.out.printf("   le = %d / ri = %d / sum = %d\n", arr[le], arr[ri], curSum);
+
                 if (curDist < minDist) {
-//                    System.out.println("      갱신된당");
                     minDist = curDist;
                     three[0] = arr[i];
                     three[1] = arr[le];
                     three[2] = arr[ri];
                 }
-
-//                if(tmpDist < curDist) break; //백트래킹
-//
-//                tmpDist = curDist;
 
                 if (curSum > 0) {
                     ri--;
