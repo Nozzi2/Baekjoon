@@ -2,41 +2,32 @@ import java.util.*;
 import java.io.*;
 
 
-
 public class Main
 {
     static int[] arr;
 
     public static void main(String args[]) throws Exception
     {
-        StringBuilder sb = new StringBuilder();
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringBuilder sb = new StringBuilder();
         StringTokenizer st = new StringTokenizer(br.readLine());
-        int size = Integer.parseInt(st.nextToken());
-        int TCASE = Integer.parseInt(st.nextToken());
-
-        arr = new int[size+1];
-        
-        for(int i=1; i<=size; i++){
+        int nodeSize = Integer.parseInt(st.nextToken());
+        int reqSize = Integer.parseInt(st.nextToken());
+        arr = new int[nodeSize+1];
+        for(int i=1; i<=nodeSize; i++){
             arr[i] = i;
         }
 
-        for(int T=0; T<TCASE; T++){
+        for(int i=0; i<reqSize; i++){
             st = new StringTokenizer(br.readLine());
             int command = Integer.parseInt(st.nextToken());
-            int num1 = Integer.parseInt(st.nextToken());
-            int num2 = Integer.parseInt(st.nextToken());
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
 
-            if(command==0){
-                //union
-                union(num1, num2);
+            if(command == 0){
+                union(a,b);
             } else {
-                //isSameParent
-                if(isSameParent(num1, num2)){
-                    sb.append("YES\n");
-                } else {
-                    sb.append("NO\n");
-                }
+                sb.append(isSameParent(a,b)?"YES\n":"NO\n");
             }
         }
 
@@ -63,14 +54,10 @@ public class Main
     }
 
     static boolean isSameParent(int a, int b){
-
         int parentA = find(a);
         int parentB = find(b);
 
-        if(parentA == parentB) {
-            return true;
-        } else {
-            return false;
-        }
+        return parentA == parentB;
     }
+
 }
