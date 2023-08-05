@@ -30,20 +30,31 @@ public class Main
         for(int i=1; i<=nodeSize; i++){
             if(!visited[i]){
                 count++;
-                dfs(i);
+                bfs(i);
             }
         }
 
         System.out.println(count);
     }
 
-    static void dfs(int idx) {
-        visited[idx] = true;
-        for(int i=1; i<=nodeSize; i++){
-            if(visited[i]) continue; //방문한 적이 있다면 패스
-            if(!gragh[idx][i]) continue; //연결되어있지 않다면 패스
+    static void bfs(int idx){
+        Queue<Integer> que = new LinkedList<>();
+        que.offer(idx);
+        visited[idx]=true;
 
-            dfs(i);
+        while(!que.isEmpty()){
+            int cur = que.poll();
+
+            for(int i=1; i<=nodeSize; i++){
+                if(visited[i]) continue;
+                if(!gragh[cur][i]) continue;
+
+                que.offer(i);
+                visited[i] = true;
+            }
         }
+
     }
+
+
 }
