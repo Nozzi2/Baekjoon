@@ -42,10 +42,11 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
         int multitapSize = Integer.parseInt(st.nextToken());
-        List<Integer> multitap = new ArrayList<>();
         int productSize = Integer.parseInt(st.nextToken());
-        Queue<Integer>[] products = new ArrayDeque[productSize + 1];
-        int[] orders = new int[productSize+1];
+        
+        List<Integer> multitap = new ArrayList<>();
+        Queue<Integer>[] products = new ArrayDeque[productSize + 1];    //물건별 뽑을 회차 저장
+        int[] orders = new int[productSize+1];  //꽂을 물건 순서
 
         for (int i = 0; i <= productSize; i++) {
             products[i] = new ArrayDeque<Integer>();
@@ -54,8 +55,8 @@ public class Main {
         st = new StringTokenizer(br.readLine());
         for (int i = 1; i <= productSize; i++) {
             int productNumber = Integer.parseInt(st.nextToken());
-            orders[i] = productNumber;
-            products[productNumber].offer(i);
+            orders[i] = productNumber;          //뽑을 번호 저장
+            products[productNumber].offer(i);   //해당 물건에 몇번쨰 회차에 뽑을지 저장해놓기
         }
 
         int count=0;
@@ -63,46 +64,50 @@ public class Main {
             int product = orders[o];
 
             if(multitap.contains(product)) continue; //이미 꼽혀있다면 생략
-
-            if (multitap.size() < multitapSize) { //꽂을 자리가 남았다면
+            if (multitap.size() < multitapSize) {    //꽂을 자리가 남았다면
                 multitap.add(product);
-            } else { //꽂을 자리가 없다면
-                count++;
+                continue;
+            }
+            
+            
+            //꽂을 자리가 없다면
+            count++;
 
-                int maxNextOrder = 0;
-                int unplugMultitap = 0;
+            int maxNextOrder = 0;   //다음 뽑을 회차의 최댓값
+            int unplugMultitap = 0; //뽑을 플러그 번호 (물건 번호랑 다름)
 
-                //어떤걸 뽑을지 검사하고
-                for (int m = 0, endm = multitap.size(); m < endm; m++) {
-                    int checkProduct = multitap.get(m);
+            //몇번째 플러그를 뽑을지 검사
+            for (int m = 0, endm = multitap.size(); m < endm; m++) { //모든 멀티탭을 순회하면서
+                int checkProduct = multitap.get(m);
 
-                    while(!products[checkProduct].isEmpty()){
-                        if (products[checkProduct].peek() < o) {
-                            products[checkProduct].poll();
-                        } else {
-                            break;
-                        }
-                    }
+                //해당 물건의 다음 뽑을 횟수를 저장하기 위해 현재 회차보다 적은거 지우기
+                while(!products[checkProduct].isEmpty()     //다음 뽑을 회차가 비어있으면 안됨
+                        && products[checkProduct].peek() < o){  //현재 회차보다 적으면
+                    products[checkProduct].poll(); //지워버리기
+                }
+                /*
+                현재 회차 5
+                검사할 물건의 뽑을 회차 [2,4,6,8]
+                위 while문을 통해서 2,4는 poll해줌.
+                 */
 
-                    if (products[checkProduct].isEmpty()) {
-                        unplugMultitap = m;
-                        maxNextOrder = 101;
-                        continue;
-                    }
-                    if(products[checkProduct].peek() > maxNextOrder){
-                        unplugMultitap = m;
-                        maxNextOrder = products[checkProduct].peek();
-                    }
+                //다음 뽑을 회차가 없는 경우
+                if (products[checkProduct].isEmpty()) {
+                    unplugMultitap = m;
+                    break;
                 }
 
-//                System.out.printf("[ %d ]번 플러그에 꽂혀있는 [ %d ]가 [ %d ]번째에서 뽑을 겁니다.\n", unplugMultitap, multitap.get(unplugMultitap),maxNextOrder);
+                //현재 물건의 다음 뽑을 회차가 기존 최대회차보다 크다면
+                int checkNextOrder = products[checkProduct].peek(); 
+                if(checkNextOrder > maxNextOrder){
+                    unplugMultitap = m; //해당 멀티탭을 뽑을 것임
+                    maxNextOrder = checkNextOrder; //최대회차 갱신
+                }
+            }//end for m
 
-                //뽑아줘야함.
-                multitap.remove(unplugMultitap);
-                multitap.add(product);
-            }
-
-//            System.out.println(multitap.toString());
+            //뽑아줘야함.
+            multitap.remove(unplugMultitap);
+            multitap.add(product);
         }
 
         System.out.println(count);
