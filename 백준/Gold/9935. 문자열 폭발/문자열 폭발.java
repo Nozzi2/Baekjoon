@@ -47,6 +47,8 @@ String input에 계속 저장하지 않고 그냥 sb자체의 길이를 반환�
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Stack;
 
 public class Main {
@@ -59,22 +61,17 @@ public class Main {
         char[] deletes = br.readLine().toCharArray();
         int delSize = deletes.length;
         target = deletes[delSize - 1]; //검사를 시작할 맨 마지막 문자 저장
-        Stack<Character> resultStack = new Stack<>(); //출력할 것만 남길 스택
-        Stack<Character> tmpStack = new Stack<>();
+        Deque<Character> resultStack = new ArrayDeque<>(); //출력할 것만 남길 스택
+        Deque<Character> tmpStack = new ArrayDeque<>();
 
         for (char c : inputs) {
             resultStack.push(c);
 
-            if (c == target) { //지워야할 문자열의 마지막 문자와 동일하다면
+            if (c == target && resultStack.size() >= delSize) { //지워야할 문자열의 마지막 문자와 동일하다면 && 스택에 저장된 문자의 갯수가 검사할 문자열보다 많이 저장되어있다면
 
                 //검사해보기
                 boolean isSame = true;
                 for (int i = delSize - 1; i >= 0; i--) {
-                    if(resultStack.empty()) { //비어있으면 끝내야함.
-                        isSame = false;
-                        break;
-                    }
-
                     char checkChar = resultStack.pop();
                     tmpStack.push(checkChar); //임시 스택에 저장
 
@@ -97,10 +94,10 @@ public class Main {
 
         StringBuilder sb = new StringBuilder();
         while (!resultStack.isEmpty()) {
-            sb.append(resultStack.pop());
+            sb.append(resultStack.pollLast());
         }
 
-        String result = sb.reverse().toString();
+        String result = sb.toString();
         System.out.println(result.length()==0?"FRULA":result);
     }
 }
