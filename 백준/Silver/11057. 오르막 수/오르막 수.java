@@ -14,14 +14,14 @@ import java.util.Arrays;
 
 public class Main {
 
-    static final long MOD = 10007;
+    static final int MOD = 10007;
 
     public static void main(String[] args) throws Exception{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int target = Integer.parseInt(br.readLine());
-        long[][] dp = new long[target + 1][11];
+        int[][] dp = new int[target + 1][11];
 
-        long sum = 0;
+        int sum = 0;
         for (int i = 0; i < 10; i++) {
             dp[1][i] = 1;
             sum++;
@@ -31,22 +31,17 @@ public class Main {
         for (int i = 2; i <= target; i++) {
             sum = 0;
             dp[i][0] = dp[i - 1][10];
-            sum += dp[i][0]; ///
+            sum += dp[i][0];
             for (int j = 1; j < 10; j++) {
-                long next = dp[i][j - 1] - dp[i - 1][j - 1];
+                int next = dp[i][j - 1] - dp[i - 1][j - 1];
                 if (next < 0) {
                     next += MOD;
                 }
-                dp[i][j] = next; ///
+                dp[i][j] = next;
                 sum += dp[i][j];
-//                sum %= MOD;
             }
             dp[i][10] = sum % MOD;
         }
-
-//        for (long[] arr : dp) {
-//            System.out.println(Arrays.toString(arr));
-//        }
 
         System.out.println(dp[target][10]);
 
