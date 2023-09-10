@@ -26,6 +26,9 @@ import java.util.*;
     이렇게 계속 반복되면 처음에는 g,h만 true였지만,
     g,h를 지나는 최단경도는 모두 true로 갱신된다.
 
+!!! 틀렸습니다 !!!
+최소값이 갱신된다면 최단경로도 갱신되므로 지났는지 여부도 변경해야하고,
+최소값이 동일하다면 모든 최단경로에서 하나라도 특정 도로를 지나기만 하면 true로 설정해야함.
 
  */
 public class Main {
@@ -72,24 +75,11 @@ public class Main {
                 costMatrix[e][s] = cost;
             }
 
-//            System.out.println("다익스트라 전.............................");
-//            for (int[] arr : costMatrix) {
-//                System.out.println(Arrays.toString(arr));
-//            }
-//            System.out.println();
-
             dijkstra(start, costMatrix, isMusts, isVisits);
-
-//            System.out.println("다익스트라 후 -----------------------------");
-//            for (boolean[] arr : isMusts) {
-//                System.out.println(Arrays.toString(arr));
-//            }
-//            System.out.println();
 
             List<Integer> rightTargets = new ArrayList<>();
             for (int i = 0; i < targetSize; i++) {
                 int target = Integer.parseInt(br.readLine()) - 1;
-//                System.out.printf("start %d, target %d\n", start, target);
                 if (isMusts[start][target]) {
                     rightTargets.add(target);
                 }
@@ -97,8 +87,6 @@ public class Main {
 
             Collections.sort(rightTargets);
 
-//            sb.append("정답 : ");//////////////////////////
-//            sb.append('\n');/////////////////////
             for (int n : rightTargets) {
                 sb.append(n + 1);
                 sb.append(' ');
@@ -114,67 +102,41 @@ public class Main {
         for (int i = 0; i < nodeSize; i++) {
             costs[i] = costMatrix[start][i];
         }
-//        System.out.println("start > " + start);
-//        for (int[] arr : costMatrix) {
-//            for (int n : arr) {
-//                System.out.print(n==INF?"X ":n+" ");
-//            }
-//            System.out.println();
-//        }
 
         for (int i = 0; i < nodeSize - 2; i++) {
-//            System.out.println();
-//            System.out.println("costs : "+Arrays.toString(costs));
-//            for (boolean[] arr : isMusts) {
-//                System.out.println(Arrays.toString(arr));
-//            }
-//            System.out.println();
-
-            int currentIndex = getMinIndex(costs, isVisits);
-            int currentCost = costs[currentIndex];
-            isVisits[currentIndex] = true;
-//            System.out.printf("curIndex : %d, curCost : %d\n", currentIndex, currentCost);
+            int current = getMinIndex(costs, isVisits);
+            int currentCost = costs[current];
+            isVisits[current] = true;
 
             for (int next = 0; next < nodeSize; next++) {
                 if(isVisits[next]) continue;
 
-                int nextCost = currentCost + costMatrix[currentIndex][next];
-//                System.out.printf("  nextIndex : %d, nextCost : %d\n", next, nextCost);
-//                System.out.printf("  기존 cost : %d, nextCost : %d\n", costs[next], nextCost);
+                int nextCost = currentCost + costMatrix[current][next];
 
                 if (costs[next] > nextCost) { //최단경로가 갱신될때
-//                    System.out.println("    갱신된닷!");
-//                    System.out.printf("    %d -?- %d --- %d\n",start, currentIndex, next);
+                    isMusts[start][next] = isMusts[current][next]; //해당경로에 특정 도로 포함여부 갱신
+                    isMusts[next][start] = isMusts[current][next]; //해당경로에 특정 도로 포함여부 갱신
 
-                    isMusts[start][next] = isMusts[currentIndex][next]; //해당경로에 특정 도로 포함여부 갱신
-                    isMusts[next][start] = isMusts[currentIndex][next]; //해당경로에 특정 도로 포함여부 갱신
+                    if(isMusts[start][current]) { //경우하기 전에 이미 포함됐다면?
+                        isMusts[start][next] = true;
+                        isMusts[next][start] = true;
+                    }
 
-                    if(isMusts[start][currentIndex]) { //해당 경로내에 특정 도로가 포함된다면?
-//                        System.out.println("    특정 도로를 지나는 경로임!");
-                        isMusts[start][next] = true; //해당경로에 특정 도로 포함여부 갱신
-                        isMusts[next][start] = true; //해당경로에 특정 도로 포함여부 갱신
+                    costs[next] = nextCost; //최단경로 값 갱신
+                } else if (costs[next] == nextCost) { //최단경로가 여러개라면?
+                    if(!isMusts[start][next]){ //false일 경우에만 갱신
+                        isMusts[start][next] = isMusts[current][next];
+                        isMusts[next][start] = isMusts[current][next];
                     }
-                    costs[next] = nextCost;
-                } else if (costs[next] == nextCost) {
-                    if(!isMusts[start][next]){
-                        isMusts[start][next] = isMusts[currentIndex][next]; //해당경로에 특정 도로 포함여부 갱신
-                        isMusts[next][start] = isMusts[currentIndex][next]; //해당경로에 특정 도로 포함여부 갱신
+
+                    if(isMusts[start][current]) { //경우하기 전에 이미 포함됐다면?
+                        isMusts[start][next] = true;
+                        isMusts[next][start] = true;
                     }
-                    if(isMusts[start][currentIndex]) { //해당 경로내에 특정 도로가 포함된다면?
-//                        System.out.println("    특정 도로를 지나는 경로임!");
-                        isMusts[start][next] = true; //해당경로에 특정 도로 포함여부 갱신
-                        isMusts[next][start] = true; //해당경로에 특정 도로 포함여부 갱신
-                    }
-                }
-            }
-        }
-//        System.out.println();
-//        System.out.println("costs : "+Arrays.toString(costs));
-//        for (boolean[] arr : isMusts) {
-//            System.out.println(Arrays.toString(arr));
-//        }
-//        System.out.println();
-    }
+                }//else if end
+            }//for next end
+        }//for i end
+    }//method dijkstra end
 
     static int getMinIndex(int[] costMatrix, boolean[] isVisits) {
         int index = 0;
@@ -309,5 +271,4 @@ out : 6
 answer : 5
 output : 5
 
-wrong : #3 #4
  */
