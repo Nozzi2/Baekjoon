@@ -51,11 +51,7 @@ public class Main
 
         if(aRoot == bRoot) return false;
 
-        if(aRoot < bRoot) {
-            parents[bRoot] = aRoot;
-        } else {
-            parents[aRoot] = bRoot;
-        }
+        parents[bRoot] = aRoot;
         return true;
     }
  
