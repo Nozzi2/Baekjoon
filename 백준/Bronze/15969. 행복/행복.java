@@ -11,9 +11,9 @@ public class Main
         int[] arr = new int[size];
 
         StringTokenizer st = new StringTokenizer(br.readLine());
+        br.close();
         for(int i=0; i<size; i++){
-            int input = Integer.parseInt(st.nextToken());
-            arr[i] = input;
+            arr[i] = Integer.parseInt(st.nextToken());
         }
 
         Arrays.sort(arr);
